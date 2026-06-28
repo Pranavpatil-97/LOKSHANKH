@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { authAPI } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
-
+import brand from '../../config/brand'
 const Login = () => {
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
@@ -37,13 +37,18 @@ const Login = () => {
         border:'1px solid #e5e5e5', width:'100%', maxWidth:'400px' }}>
 
         <div style={{ textAlign:'center', marginBottom:'1.5rem' }}>
-          <h1 style={{ color:'#B91C1C', fontSize:'22px', fontWeight:'600' }}>
-            LOKSHANKH
-          </h1>
-          <p style={{ color:'#666', fontSize:'14px', marginTop:'4px' }}>
-            न्यूज नेटवर्क — लॉगिन करा
-          </p>
-        </div>
+  {brand.logo && (
+    <img src={brand.logo} alt="logo"
+      style={{ height:'48px', marginBottom:'8px' }}
+      onError={e => e.target.style.display='none'} />
+  )}
+  <h1 style={{ color:'#B91C1C', fontSize:'22px', fontWeight:'700' }}>
+    {brand.name}
+  </h1>
+  <p style={{ color:'#666', fontSize:'13px', marginTop:'4px' }}>
+    {brand.tagline} — लॉगिन करा
+  </p>
+</div>
 
         {error && (
           <div style={{ background:'#FEF2F2', border:'1px solid #FECACA',

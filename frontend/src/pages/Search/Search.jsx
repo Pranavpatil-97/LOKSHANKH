@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { articlesAPI } from '../../services/api'
-
+import brand from '../../config/brand'
 const Search = () => {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -65,7 +65,7 @@ const Search = () => {
   return (
     <div style={s.wrap}>
       <div style={s.nav}>
-        <span style={s.navL} onClick={() => navigate('/')}>LOKSHANKH</span>
+       <span style={s.navL} onClick={() => navigate('/')}>{brand.name}</span>
         <button style={s.navBtn} onClick={() => navigate('/')}>होम</button>
       </div>
 

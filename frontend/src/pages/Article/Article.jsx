@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { articlesAPI } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
+import brand from '../../config/brand'
+
 
 const Article = () => {
   const { slug } = useParams()
@@ -63,7 +65,7 @@ const Article = () => {
   return (
     <div style={s.wrap}>
       <div style={s.nav}>
-        <span style={s.navL} onClick={() => navigate('/')}>LOKSHANKH</span>
+        <span style={s.navL} onClick={() => navigate('/')}>{brand.name}</span>
         <div style={s.navR}>
           {user?.role === 'admin' &&
             <button style={s.navBtn} onClick={() => navigate('/admin')}>Admin</button>}

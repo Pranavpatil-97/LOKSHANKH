@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { adminAPI } from '../../services/api'
 import { useNavigate } from 'react-router-dom'
+import brand from '../../config/brand'
 
 const AdminDash = () => {
   const { user, logout } = useAuth()
@@ -117,7 +118,7 @@ const AdminDash = () => {
     <div style={s.wrap}>
       {/* Navbar */}
       <div style={s.nav}>
-        <span style={s.navL}>LOKSHANKH — Admin Panel</span>
+        <span style={s.navL}>{brand.name} — Admin Panel</span>
         <div style={s.navR}>
           <span style={{ color:'rgba(255,255,255,0.8)', fontSize:'13px' }}>
             {user?.name}
