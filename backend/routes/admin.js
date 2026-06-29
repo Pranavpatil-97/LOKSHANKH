@@ -94,7 +94,18 @@ router.delete('/articles/:id', ...adminOnly, async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 });
-
+// Get ALL articles (admin only)
+router.get('/articles/all', ...adminOnly, async (req, res) => {
+  try {
+    const articles = await Article.find()
+      .populate('author', 'name email')
+      .populate('category', 'name nameMarathi')
+      .sort({ createdAt: -1 })
+    res.json({ success: true, articles })
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message })
+  }
+})
 // Get analytics
 router.get('/analytics', ...adminOnly, async (req, res) => {
   try {

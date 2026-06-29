@@ -38,6 +38,7 @@ export const adminAPI = {
   deleteArticle:  (id)       => API.delete(`/admin/articles/${id}`),
   getAnalytics:   ()         => API.get('/admin/analytics'),
   getCategories:  ()         => API.get('/admin/categories'),
+  getAllArticles: () => API.get('/admin/articles/all'),
   createCategory: (data)     => API.post('/admin/categories', data)
 }
 
@@ -46,5 +47,9 @@ export const uploadAPI = {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
-
+// Wake up Render backend (free tier sleeps)
+export const wakeUpServer = () => {
+  fetch('https://lokshankh-backend.onrender.com/') 
+    .catch(() => {})
+}
 export default API

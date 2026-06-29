@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { articlesAPI, adminAPI } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
 import brand from '../../config/brand'
-
+import { wakeUpServer } from '../../services/api'
 const Home = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
@@ -19,7 +19,10 @@ const Home = () => {
   const [menuOpen, setMenuOpen]     = useState(false)
 
   useEffect(() => { fetchAll() }, [selected])
-
+   
+  useEffect(() => {
+  wakeUpServer()
+}, [])
   useEffect(() => {
     if (breaking.length === 0) return
     const t = setInterval(() => {
@@ -29,24 +32,26 @@ const Home = () => {
   }, [breaking])
 
   const fetchAll = async () => {
-    setLoading(true)
-    try {
-      const [artRes, trendRes, breakRes, catRes] = await Promise.all([
-        articlesAPI.getAll({ category: selected, limit: 8 }),
-        articlesAPI.getTrending(),
-        articlesAPI.getBreaking(),
-        adminAPI.getCategories()
-      ])
-      setArticles(artRes.data.articles)
-      setTrending(trendRes.data.articles)
-      setBreaking(breakRes.data.articles)
-      setCategories(catRes.data.categories)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
+  setLoading(true)
+  try {
+    const [artRes, trendRes, breakRes, catRes] = await Promise.all([
+      articlesAPI.getAll({ category: selected, limit: 8 }),
+      articlesAPI.getTrending(),
+      articlesAPI.getBreaking(),
+      adminAPI.getCategories()
+    ])
+    setArticles(artRes.data.articles)
+    setTrending(trendRes.data.articles)
+    setBreaking(breakRes.data.articles)
+    setCategories(catRes.data.categories)
+  } catch (err) {
+    console.error('API Error:', err)
+    // Retry once after 3 seconds if backend was sleeping
+    setTimeout(() => fetchAll(), 3000)
+  } finally {
+    setLoading(false)
   }
+}
 
   const handleSearch = (e) => {
     e.preventDefault()

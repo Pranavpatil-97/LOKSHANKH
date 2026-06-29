@@ -13,26 +13,29 @@ const AdminDash = () => {
   const [users, setUsers]            = useState([])
   const [activeTab, setActiveTab]    = useState('overview')
   const [loading, setLoading]        = useState(true)
-
+  const [allArticles, setAllArticles] = useState([])
+const [artSearch, setArtSearch]     = useState('')
   useEffect(() => { fetchData() }, [])
 
   const fetchData = async () => {
-    setLoading(true)
-    try {
-      const [analyticsRes, pendingRes, usersRes] = await Promise.all([
-        adminAPI.getAnalytics(),
-        adminAPI.getPending(),
-        adminAPI.getUsers()
-      ])
-      setAnalytics(analyticsRes.data.analytics)
-      setPending(pendingRes.data.articles)
-      setUsers(usersRes.data.users)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
+  setLoading(true)
+  try {
+    const [analyticsRes, pendingRes, usersRes, allArtRes] = await Promise.all([
+      adminAPI.getAnalytics(),
+      adminAPI.getPending(),
+      adminAPI.getUsers(),
+      adminAPI.getAllArticles()
+    ])
+    setAnalytics(analyticsRes.data.analytics)
+    setPending(pendingRes.data.articles)
+    setUsers(usersRes.data.users)
+    setAllArticles(allArtRes.data.articles)
+  } catch (err) {
+    console.error(err)
+  } finally {
+    setLoading(false)
   }
+}
 
   const handleApprove = async (id) => {
     try {
@@ -65,6 +68,22 @@ const AdminDash = () => {
       setUsers(users.map(u => u._id === id ? { ...u, isActive: !u.isActive } : u))
     } catch (err) { alert('Failed to toggle user') }
   }
+ 
+  const handleDelete = async (id, title) => {
+  if (!window.confirm(`हे बातमी कायमचे हटवायचे आहे का?\n\n"${title}"`)) return
+  try {
+    await adminAPI.deleteArticle(id)
+    setAllArticles(allArticles.filter(a => a._id !== id))
+    setAnalytics(prev => ({
+      ...prev,
+      totalArticles: prev.totalArticles - 1,
+      publishedCount: prev.publishedCount - 1
+    }))
+    alert('बातमी हटवली!')
+  } catch (err) {
+    alert('हटवता आले नाही')
+  }
+}
 
   const s = {
     wrap:    { minHeight:'100vh', background:'#f5f5f5', fontFamily:'sans-serif' },
@@ -134,16 +153,17 @@ const AdminDash = () => {
 
       <div style={s.body}>
         {/* Tabs */}
-        <div style={s.tabs}>
-          {['overview','pending','users'].map(tab => (
-            <button key={tab} style={s.tab(activeTab === tab)}
-              onClick={() => setActiveTab(tab)}>
-              {tab === 'overview' ? 'Overview' :
-               tab === 'pending' ? `Pending Articles (${pending.length})` :
-               `Users (${users.length})`}
-            </button>
-          ))}
-        </div>
+<div style={s.tabs}>
+  {['overview','pending','users','articles'].map(tab => (
+    <button key={tab} style={s.tab(activeTab === tab)}
+      onClick={() => setActiveTab(tab)}>
+      {tab === 'overview'  ? 'Overview' :
+       tab === 'pending'   ? `Pending (${pending.length})` :
+       tab === 'users'     ? `Users (${users.length})` :
+       `All Articles`}
+    </button>
+  ))}
+</div>
 
         {/* Overview Tab */}
         {activeTab === 'overview' && analytics && (
@@ -302,6 +322,120 @@ const AdminDash = () => {
             </table>
           </div>
         )}
+
+        {/* All Articles Tab */}
+{activeTab === 'articles' && (
+  <div style={s.card}>
+    <div style={{ display:'flex', alignItems:'center',
+      justifyContent:'space-between', marginBottom:'16px',
+      flexWrap:'wrap', gap:'10px' }}>
+      <div style={s.title}>सर्व बातम्या</div>
+      <input
+        placeholder="शीर्षक शोधा..."
+        value={artSearch}
+        onChange={e => setArtSearch(e.target.value)}
+        style={{ padding:'7px 12px', borderRadius:'8px',
+          border:'1px solid #ddd', fontSize:'13px',
+          outline:'none', width:'220px' }}
+      />
+    </div>
+
+    {allArticles.length === 0 ? (
+      <p style={{ color:'#999', fontSize:'14px' }}>
+        कोणत्याही बातम्या नाहीत.
+      </p>
+    ) : (
+      <table style={s.table}>
+        <thead>
+          <tr>
+            <th style={s.th}>शीर्षक</th>
+            <th style={s.th}>लेखक</th>
+            <th style={s.th}>विभाग</th>
+            <th style={s.th}>स्थिती</th>
+            <th style={s.th}>तारीख</th>
+            <th style={s.th}>कृती</th>
+          </tr>
+        </thead>
+        <tbody>
+          {allArticles
+            .filter(a => a.title.toLowerCase()
+              .includes(artSearch.toLowerCase()))
+            .map(a => (
+            <tr key={a._id}>
+              <td style={{ ...s.td, maxWidth:'240px' }}>
+                <div style={{ fontWeight:'500', fontSize:'13px',
+                  lineHeight:'1.4' }}>
+                  {a.title}
+                </div>
+              </td>
+              <td style={s.td}>
+                <div style={{ fontSize:'13px' }}>{a.author?.name}</div>
+                <div style={{ fontSize:'11px', color:'#999' }}>
+                  {a.author?.email}
+                </div>
+              </td>
+              <td style={s.td}>
+                {a.category?.nameMarathi || a.category?.name || '—'}
+              </td>
+              <td style={s.td}>
+                <span style={{
+                  background:
+                    a.status === 'published' ? '#E1F5EE' :
+                    a.status === 'pending'   ? '#FAEEDA' :
+                    a.status === 'rejected'  ? '#FEF2F2' : '#f0f0f0',
+                  color:
+                    a.status === 'published' ? '#0F6E56' :
+                    a.status === 'pending'   ? '#633806' :
+                    a.status === 'rejected'  ? '#B91C1C' : '#666',
+                  padding:'3px 10px', borderRadius:'20px',
+                  fontSize:'11px', fontWeight:'500'
+                }}>
+                  {a.status}
+                </span>
+              </td>
+              <td style={{ ...s.td, fontSize:'12px', color:'#666' }}>
+                {new Date(a.createdAt).toLocaleDateString('mr-IN')}
+              </td>
+              <td style={s.td}>
+                <div style={{ display:'flex', gap:'6px', flexWrap:'wrap' }}>
+                  {a.status === 'pending' && (
+                    <button style={s.btn('green')}
+                      onClick={() => handleApprove(a._id)}>
+                      Approve
+                    </button>
+                  )}
+                  {a.status === 'published' && (
+                    <button
+                      style={{ ...s.btn('red'),
+                        background:'none', color:'#B91C1C',
+                        border:'1px solid #B91C1C' }}
+                      onClick={async () => {
+                        try {
+                          await adminAPI.deleteArticle(a._id)
+                          setAllArticles(prev =>
+                            prev.map(x => x._id === a._id
+                              ? { ...x, status:'draft' } : x))
+                        } catch { alert('Failed') }
+                      }}>
+                      Unpublish
+                    </button>
+                  )}
+                  <button
+                    style={{ padding:'5px 12px', borderRadius:'6px',
+                      border:'none', cursor:'pointer', fontSize:'12px',
+                      fontWeight:'500', background:'#B91C1C', color:'#fff' }}
+                    onClick={() => handleDelete(a._id, a.title)}>
+                    🗑 हटवा
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </div>
+)}
       </div>
     </div>
   )
