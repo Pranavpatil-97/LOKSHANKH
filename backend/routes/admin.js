@@ -143,7 +143,7 @@ router.post('/categories', ...adminOnly, async (req, res) => {
 });
 
 // Get all categories
-router.get('/categories', protect, async (req, res) => {
+router.get('/categories',  async (req, res) => {
   try {
     const categories = await Category.find({ isActive: true });
     res.json({ success: true, categories });
