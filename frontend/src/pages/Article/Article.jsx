@@ -4,7 +4,6 @@ import { articlesAPI } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
 import brand from '../../config/brand'
 
-
 const Article = () => {
   const { slug } = useParams()
   const navigate  = useNavigate()
@@ -26,34 +25,6 @@ const Article = () => {
     return `${Math.floor(diff/1440)} दिवसांपूर्वी`
   }
 
-  const s = {
-    wrap:    { minHeight:'100vh', background:'#f5f5f5', fontFamily:'sans-serif' },
-    nav:     { background:'#B91C1C', padding:'0 24px', height:'52px',
-               display:'flex', alignItems:'center', justifyContent:'space-between' },
-    navL:    { color:'#fff', fontWeight:'700', fontSize:'18px',
-               cursor:'pointer' },
-    navR:    { display:'flex', gap:'12px' },
-    navBtn:  { background:'rgba(255,255,255,0.2)', color:'#fff', border:'none',
-               padding:'6px 14px', borderRadius:'6px', cursor:'pointer', fontSize:'13px' },
-    body:    { maxWidth:'780px', margin:'0 auto', padding:'32px 16px' },
-    back:    { fontSize:'13px', color:'#B91C1C', cursor:'pointer',
-               marginBottom:'20px', display:'inline-block' },
-    cat:     { background:'#FEF2F2', color:'#B91C1C', fontSize:'12px',
-               fontWeight:'500', padding:'4px 12px', borderRadius:'20px',
-               display:'inline-block', marginBottom:'12px' },
-    title:   { fontSize:'28px', fontWeight:'700', lineHeight:'1.35',
-               color:'#111', marginBottom:'12px' },
-    meta:    { fontSize:'13px', color:'#666', marginBottom:'20px',
-               display:'flex', gap:'12px', flexWrap:'wrap' },
-    img:     { width:'100%', borderRadius:'12px', marginBottom:'24px',
-               maxHeight:'400px', objectFit:'cover' },
-    content: { fontSize:'16px', lineHeight:'1.9', color:'#222',
-               whiteSpace:'pre-wrap' },
-    tags:    { marginTop:'28px', display:'flex', gap:'8px', flexWrap:'wrap' },
-    tag:     { background:'#f0f0f0', color:'#555', fontSize:'12px',
-               padding:'4px 12px', borderRadius:'20px' }
-  }
-
   if (loading) return (
     <div style={{ textAlign:'center', padding:'4rem', color:'#999' }}>
       लोड होत आहे...
@@ -63,57 +34,97 @@ const Article = () => {
   if (!article) return null
 
   return (
-    <div style={s.wrap}>
-      <div style={s.nav}>
-        <span style={s.navL} onClick={() => navigate('/')}>{brand.name}</span>
-        <div style={s.navR}>
+    <div style={{ minHeight:'100vh', width:'100%', maxWidth:'100vw',
+      overflowX:'hidden', background:'#f5f5f5', fontFamily:'sans-serif' }}>
+
+      {/* Nav */}
+      <div style={{ background:'#B91C1C',
+        padding:'0 clamp(12px,3vw,24px)', height:'52px',
+        display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <span onClick={() => navigate('/')}
+          style={{ color:'#fff', fontWeight:'700',
+            fontSize:'clamp(14px,3.2vw,18px)', cursor:'pointer',
+            whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
+          {brand.name}
+        </span>
+        <div style={{ display:'flex', gap:'8px', flexShrink:0 }}>
           {user?.role === 'admin' &&
-            <button style={s.navBtn} onClick={() => navigate('/admin')}>Admin</button>}
+            <button onClick={() => navigate('/admin')} style={navBtnStyle}>Admin</button>}
           {(user?.role === 'employee' || user?.role === 'admin') &&
-            <button style={s.navBtn} onClick={() => navigate('/editor')}>Editor</button>}
-          <button style={s.navBtn} onClick={() => navigate('/')}>होम</button>
+            <button onClick={() => navigate('/editor')} style={navBtnStyle}>Editor</button>}
+          <button onClick={() => navigate('/')} style={navBtnStyle}>होम</button>
         </div>
       </div>
 
-      <div style={s.body}>
-        <span style={s.back} onClick={() => navigate(-1)}>← मागे जा</span>
+      <div style={{ maxWidth:'780px', margin:'0 auto',
+        padding:'clamp(16px,4vw,32px) clamp(12px,3vw,16px)',
+        width:'100%', boxSizing:'border-box' }}>
 
-        <div style={s.cat}>
+        <span onClick={() => navigate(-1)}
+          style={{ fontSize:'13px', color:'#B91C1C', cursor:'pointer',
+            marginBottom:'20px', display:'inline-block' }}>
+          ← मागे जा
+        </span>
+
+        <div style={{ background:'#FEF2F2', color:'#B91C1C',
+          fontSize:'12px', fontWeight:'500', padding:'4px 12px',
+          borderRadius:'20px', display:'inline-block', marginBottom:'12px' }}>
           {article.category?.nameMarathi || article.category?.name}
         </div>
 
-        <h1 style={s.title}>{article.title}</h1>
+        <h1 style={{ fontSize:'clamp(20px,5vw,28px)', fontWeight:'700',
+          lineHeight:'1.35', color:'#111', marginBottom:'12px',
+          overflowWrap:'break-word' }}>
+          {article.title}
+        </h1>
 
-        <div style={s.meta}>
+        <div style={{ fontSize:'clamp(11px,2.4vw,13px)', color:'#666',
+          marginBottom:'20px', display:'flex', gap:'12px', flexWrap:'wrap' }}>
           <span>✍️ {article.author?.name}</span>
           <span>🕐 {timeAgo(article.publishedAt)}</span>
           <span>👁️ {article.views} वाचन</span>
         </div>
 
         {article.thumbnail && (
-          <img src={article.thumbnail} alt={article.title} style={s.img} />
+          <img src={article.thumbnail} alt={article.title} loading="lazy"
+            style={{ width:'100%', borderRadius:'12px', marginBottom:'24px',
+              aspectRatio:'16/9', objectFit:'cover' }} />
         )}
 
         {article.excerpt && (
-          <p style={{ ...s.content, fontWeight:'500', color:'#444',
+          <p style={{ fontSize:'clamp(13px,2.8vw,15px)', lineHeight:'1.9',
+            fontWeight:'500', color:'#444',
             borderLeft:'3px solid #B91C1C', paddingLeft:'16px',
-            marginBottom:'20px', fontSize:'15px' }}>
+            marginBottom:'20px', overflowWrap:'break-word' }}>
             {article.excerpt}
           </p>
         )}
 
-        <div style={s.content}>{article.content}</div>
+        <div style={{ fontSize:'clamp(14px,3vw,16px)', lineHeight:'1.9',
+          color:'#222', whiteSpace:'pre-wrap', overflowWrap:'break-word' }}>
+          {article.content}
+        </div>
 
         {article.tags?.length > 0 && (
-          <div style={s.tags}>
+          <div style={{ marginTop:'28px', display:'flex',
+            gap:'8px', flexWrap:'wrap' }}>
             {article.tags.map((t, i) => (
-              <span key={i} style={s.tag}>#{t}</span>
+              <span key={i} style={{ background:'#f0f0f0', color:'#555',
+                fontSize:'12px', padding:'4px 12px', borderRadius:'20px' }}>
+                #{t}
+              </span>
             ))}
           </div>
         )}
       </div>
     </div>
   )
+}
+
+const navBtnStyle = {
+  background:'rgba(255,255,255,0.2)', color:'#fff', border:'none',
+  padding:'6px clamp(8px,2vw,14px)', borderRadius:'6px',
+  cursor:'pointer', fontSize:'clamp(11px,2.4vw,13px)', whiteSpace:'nowrap'
 }
 
 export default Article

@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { articlesAPI } from '../../services/api'
 import brand from '../../config/brand'
+
 const Search = () => {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const q = searchParams.get('q') || ''
 
-  const [results, setResults]   = useState([])
-  const [loading, setLoading]   = useState(true)
-  const [search, setSearch]     = useState(q)
+  const [results, setResults] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch]   = useState(q)
 
   useEffect(() => {
     if (!q) return
@@ -32,49 +33,45 @@ const Search = () => {
     return `${Math.floor(diff/1440)} दिवसांपूर्वी`
   }
 
-  const s = {
-    wrap:    { minHeight:'100vh', background:'#f5f5f5', fontFamily:'sans-serif' },
-    nav:     { background:'#B91C1C', padding:'0 24px', height:'52px',
-               display:'flex', alignItems:'center', justifyContent:'space-between' },
-    navL:    { color:'#fff', fontWeight:'700', fontSize:'18px', cursor:'pointer' },
-    navBtn:  { background:'rgba(255,255,255,0.2)', color:'#fff', border:'none',
-               padding:'6px 14px', borderRadius:'6px', cursor:'pointer', fontSize:'13px' },
-    body:    { maxWidth:'900px', margin:'0 auto', padding:'32px 16px' },
-    searchBox:{ display:'flex', gap:'8px', marginBottom:'24px' },
-    input:   { flex:1, padding:'10px 16px', borderRadius:'8px',
-               border:'1px solid #ddd', fontSize:'14px', outline:'none' },
-    btn:     { background:'#B91C1C', color:'#fff', border:'none',
-               padding:'10px 20px', borderRadius:'8px', cursor:'pointer',
-               fontSize:'14px', fontWeight:'500' },
-    heading: { fontSize:'16px', fontWeight:'600', color:'#111',
-               marginBottom:'16px' },
-    card:    { background:'#fff', borderRadius:'10px', border:'1px solid #eee',
-               padding:'16px', marginBottom:'12px', cursor:'pointer',
-               display:'flex', gap:'16px', alignItems:'flex-start' },
-    img:     { width:'100px', height:'70px', borderRadius:'8px',
-               objectFit:'cover', flexShrink:0,
-               background:'linear-gradient(135deg,#1e3a5f,#374151)' },
-    cat:     { fontSize:'11px', color:'#B91C1C', fontWeight:'500',
-               marginBottom:'4px', textTransform:'uppercase' },
-    title:   { fontSize:'15px', fontWeight:'500', color:'#111',
-               lineHeight:'1.4', marginBottom:'6px' },
-    excerpt: { fontSize:'13px', color:'#666', lineHeight:'1.5' },
-    meta:    { fontSize:'11px', color:'#999', marginTop:'6px' }
-  }
-
   return (
-    <div style={s.wrap}>
-      <div style={s.nav}>
-       <span style={s.navL} onClick={() => navigate('/')}>{brand.name}</span>
-        <button style={s.navBtn} onClick={() => navigate('/')}>होम</button>
+    <div style={{ minHeight:'100vh', width:'100%', maxWidth:'100vw',
+      overflowX:'hidden', background:'#f5f5f5', fontFamily:'sans-serif' }}>
+
+      <div style={{ background:'#B91C1C',
+        padding:'0 clamp(12px,3vw,24px)', height:'52px',
+        display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <span onClick={() => navigate('/')}
+          style={{ color:'#fff', fontWeight:'700',
+            fontSize:'clamp(14px,3.2vw,18px)', cursor:'pointer' }}>
+          {brand.name}
+        </span>
+        <button onClick={() => navigate('/')}
+          style={{ background:'rgba(255,255,255,0.2)', color:'#fff',
+            border:'none', padding:'6px clamp(8px,2vw,14px)',
+            borderRadius:'6px', cursor:'pointer',
+            fontSize:'clamp(11px,2.4vw,13px)' }}>
+          होम
+        </button>
       </div>
 
-      <div style={s.body}>
-        <form style={s.searchBox} onSubmit={handleSearch}>
-          <input style={s.input} value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="बातमी शोधा..." />
-          <button type="submit" style={s.btn}>शोधा</button>
+      <div style={{ maxWidth:'900px', margin:'0 auto',
+        padding:'clamp(16px,4vw,32px) clamp(12px,3vw,16px)',
+        width:'100%', boxSizing:'border-box' }}>
+
+        <form onSubmit={handleSearch}
+          style={{ display:'flex', gap:'8px', marginBottom:'24px' }}>
+          <input value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="बातमी शोधा..."
+            style={{ flex:1, minWidth:0, padding:'10px 16px',
+              borderRadius:'8px', border:'1px solid #ddd',
+              fontSize:'14px', outline:'none' }} />
+          <button type="submit"
+            style={{ background:'#B91C1C', color:'#fff', border:'none',
+              padding:'10px clamp(14px,3vw,20px)', borderRadius:'8px',
+              cursor:'pointer', fontSize:'14px', fontWeight:'500',
+              flexShrink:0 }}>
+            शोधा
+          </button>
         </form>
 
         {loading ? (
@@ -83,25 +80,48 @@ const Search = () => {
           </div>
         ) : (
           <>
-            <div style={s.heading}>
+            <div style={{ fontSize:'clamp(14px,3vw,16px)', fontWeight:'600',
+              color:'#111', marginBottom:'16px' }}>
               {results.length > 0
                 ? `"${q}" साठी ${results.length} निकाल`
                 : `"${q}" साठी कोणताही निकाल नाही`}
             </div>
             {results.map(a => (
-              <div key={a._id} style={s.card}
-                onClick={() => navigate(`/article/${a.slug}`)}>
-                {a.thumbnail
-                  ? <img src={a.thumbnail} alt={a.title} style={s.img} />
-                  : <div style={s.img} />}
-                <div style={{ flex:1 }}>
-                  <div style={s.cat}>
+              <div key={a._id}
+                onClick={() => navigate(`/article/${a.slug}`)}
+                style={{ background:'#fff', borderRadius:'10px',
+                  border:'1px solid #eee', padding:'clamp(10px,2.5vw,16px)',
+                  marginBottom:'12px', cursor:'pointer',
+                  display:'flex', gap:'clamp(10px,2.5vw,16px)',
+                  alignItems:'flex-start' }}>
+                <div style={{ width:'clamp(70px,18vw,100px)',
+                  aspectRatio:'4/3', borderRadius:'8px',
+                  objectFit:'cover', flexShrink:0,
+                  background:'linear-gradient(135deg,#1e3a5f,#374151)',
+                  overflow:'hidden' }}>
+                  {a.thumbnail && (
+                    <img src={a.thumbnail} alt={a.title} loading="lazy"
+                      style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                  )}
+                </div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontSize:'11px', color:'#B91C1C',
+                    fontWeight:'500', marginBottom:'4px',
+                    textTransform:'uppercase' }}>
                     {a.category?.nameMarathi || a.category?.name}
                   </div>
-                  <div style={s.title}>{a.title}</div>
-                  {a.excerpt &&
-                    <div style={s.excerpt}>{a.excerpt.slice(0, 120)}...</div>}
-                  <div style={s.meta}>
+                  <div style={{ fontSize:'clamp(13px,2.8vw,15px)', fontWeight:'500',
+                    color:'#111', lineHeight:'1.4', marginBottom:'6px',
+                    overflowWrap:'break-word' }}>
+                    {a.title}
+                  </div>
+                  {a.excerpt && (
+                    <div style={{ fontSize:'clamp(11px,2.4vw,13px)', color:'#666',
+                      lineHeight:'1.5', overflowWrap:'break-word' }}>
+                      {a.excerpt.slice(0, 120)}...
+                    </div>
+                  )}
+                  <div style={{ fontSize:'11px', color:'#999', marginTop:'6px' }}>
                     {a.author?.name} · {timeAgo(a.publishedAt)}
                   </div>
                 </div>

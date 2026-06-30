@@ -130,43 +130,55 @@ const EditorDash = () => {
     )
   }
 
-  const s = {
-    wrap:   { minHeight:'100vh', background:'#f5f5f5', fontFamily:'sans-serif' },
-    nav:    { background:'#B91C1C', padding:'0 24px', display:'flex',
-              alignItems:'center', justifyContent:'space-between', height:'56px' },
-    navL:   { color:'#fff', fontWeight:'600', fontSize:'18px' },
-    navR:   { display:'flex', alignItems:'center', gap:'12px' },
-    navBtn: { background:'rgba(255,255,255,0.2)', color:'#fff', border:'none',
-              padding:'6px 14px', borderRadius:'6px', cursor:'pointer', fontSize:'13px' },
-    body:   { maxWidth:'1000px', margin:'0 auto', padding:'24px 16px' },
-    tabs:   { display:'flex', gap:'8px', marginBottom:'24px' },
-    tab:    (a) => ({
-              padding:'8px 18px', borderRadius:'8px', border:'none', cursor:'pointer',
-              fontSize:'13px', fontWeight:'500',
-              background: a ? '#B91C1C' : '#fff',
-              color: a ? '#fff' : '#444',
-              border: a ? 'none' : '1px solid #ddd' }),
-    card:   { background:'#fff', borderRadius:'12px', padding:'20px',
-              border:'1px solid #e5e5e5', marginBottom:'16px' },
-    table:  { width:'100%', borderCollapse:'collapse', fontSize:'13px' },
-    th:     { textAlign:'left', padding:'10px 12px', background:'#f9f9f9',
-              borderBottom:'1px solid #eee', fontWeight:'500', color:'#444' },
-    td:     { padding:'10px 12px', borderBottom:'1px solid #f0f0f0', color:'#333' },
-    btn:    (c) => ({
-              padding:'5px 12px', borderRadius:'6px', border:'none',
-              cursor:'pointer', fontSize:'12px', fontWeight:'500', marginRight:'6px',
-              background: c==='red'?'#B91C1C': c==='green'?'#0F6E56':
-                          c==='blue'?'#185FA5':'#888',
-              color:'#fff' }),
-    label:  { fontSize:'13px', fontWeight:'500', display:'block', marginBottom:'6px' },
-    input:  { width:'100%', padding:'9px 12px', borderRadius:'8px',
-              border:'1px solid #ddd', fontSize:'14px', outline:'none',
-              marginBottom:'14px' },
-    textarea:{ width:'100%', padding:'9px 12px', borderRadius:'8px',
-               border:'1px solid #ddd', fontSize:'14px', outline:'none',
-               marginBottom:'14px', minHeight:'300px', resize:'vertical',
-               fontFamily:'sans-serif', lineHeight:'1.7' }
-  }
+ const s = {
+  wrap:   { minHeight:'100vh', width:'100%', maxWidth:'100vw',
+            overflowX:'hidden', background:'#f5f5f5', fontFamily:'sans-serif' },
+  nav:    { background:'#B91C1C', padding:'0 clamp(12px,3vw,24px)',
+            display:'flex', alignItems:'center', justifyContent:'space-between',
+            height:'56px', flexWrap:'wrap', gap:'8px' },
+  navL:   { color:'#fff', fontWeight:'600', fontSize:'clamp(13px,3vw,18px)',
+            whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' },
+  navR:   { display:'flex', alignItems:'center', gap:'clamp(6px,1.5vw,12px)',
+            flexWrap:'wrap' },
+  navBtn: { background:'rgba(255,255,255,0.2)', color:'#fff', border:'none',
+            padding:'6px clamp(8px,2vw,14px)', borderRadius:'6px',
+            cursor:'pointer', fontSize:'clamp(11px,2.4vw,13px)',
+            whiteSpace:'nowrap' },
+  body:   { maxWidth:'1000px', margin:'0 auto',
+            padding:'clamp(16px,4vw,24px) clamp(10px,3vw,16px)',
+            width:'100%', boxSizing:'border-box' },
+  tabs:   { display:'flex', gap:'8px', marginBottom:'24px', flexWrap:'wrap' },
+  tab:    (a) => ({
+            padding:'8px clamp(10px,2.5vw,18px)', borderRadius:'8px',
+            border: a ? 'none' : '1px solid #ddd', cursor:'pointer',
+            fontSize:'clamp(11px,2.4vw,13px)', fontWeight:'500',
+            background: a ? '#B91C1C' : '#fff',
+            color: a ? '#fff' : '#444', whiteSpace:'nowrap' }),
+  card:   { background:'#fff', borderRadius:'12px',
+            padding:'clamp(14px,3vw,20px)', border:'1px solid #e5e5e5',
+            marginBottom:'16px' },
+  tableWrap: { overflowX:'auto', WebkitOverflowScrolling:'touch' },
+  table:  { width:'100%', minWidth:'520px', borderCollapse:'collapse',
+            fontSize:'13px' },
+  th:     { textAlign:'left', padding:'10px 12px', background:'#f9f9f9',
+            borderBottom:'1px solid #eee', fontWeight:'500', color:'#444',
+            whiteSpace:'nowrap' },
+  td:     { padding:'10px 12px', borderBottom:'1px solid #f0f0f0', color:'#333' },
+  btn:    (c) => ({
+            padding:'5px 12px', borderRadius:'6px', border:'none',
+            cursor:'pointer', fontSize:'12px', fontWeight:'500', marginRight:'6px',
+            background: c==='red'?'#B91C1C': c==='green'?'#0F6E56':
+                        c==='blue'?'#185FA5':'#888',
+            color:'#fff', whiteSpace:'nowrap' }),
+  label:  { fontSize:'13px', fontWeight:'500', display:'block', marginBottom:'6px' },
+  input:  { width:'100%', padding:'9px 12px', borderRadius:'8px',
+            border:'1px solid #ddd', fontSize:'14px', outline:'none',
+            marginBottom:'14px', boxSizing:'border-box' },
+  textarea:{ width:'100%', padding:'9px 12px', borderRadius:'8px',
+             border:'1px solid #ddd', fontSize:'14px', outline:'none',
+             marginBottom:'14px', minHeight:'250px', resize:'vertical',
+             fontFamily:'sans-serif', lineHeight:'1.7', boxSizing:'border-box' }
+}
 
   if (loading) return (
     <div style={{ textAlign:'center', padding:'4rem', color:'#666' }}>
@@ -225,6 +237,7 @@ const EditorDash = () => {
                 </button>
               </div>
             ) : (
+              <div style={s.tableWrap}>
               <table style={s.table}>
                 <thead>
                   <tr>
@@ -281,6 +294,7 @@ const EditorDash = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             )}
           </div>
         )}

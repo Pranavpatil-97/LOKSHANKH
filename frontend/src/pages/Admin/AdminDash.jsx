@@ -86,46 +86,60 @@ const [artSearch, setArtSearch]     = useState('')
 }
 
   const s = {
-    wrap:    { minHeight:'100vh', background:'#f5f5f5', fontFamily:'sans-serif' },
-    nav:     { background:'#B91C1C', padding:'0 24px', display:'flex',
-               alignItems:'center', justifyContent:'space-between', height:'56px' },
-    navL:    { color:'#fff', fontWeight:'600', fontSize:'18px' },
-    navR:    { display:'flex', alignItems:'center', gap:'16px' },
-    navBtn:  { background:'rgba(255,255,255,0.2)', color:'#fff', border:'none',
-               padding:'6px 14px', borderRadius:'6px', cursor:'pointer', fontSize:'13px' },
-    body:    { maxWidth:'1100px', margin:'0 auto', padding:'24px 16px' },
-    tabs:    { display:'flex', gap:'8px', marginBottom:'24px', flexWrap:'wrap' },
-    tab:     (active) => ({
-               padding:'8px 18px', borderRadius:'8px', border:'none', cursor:'pointer',
-               fontSize:'13px', fontWeight:'500',
-               background: active ? '#B91C1C' : '#fff',
-               color: active ? '#fff' : '#444',
-               border: active ? 'none' : '1px solid #ddd' }),
-    grid:    { display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',
-               gap:'16px', marginBottom:'28px' },
-    card:    { background:'#fff', borderRadius:'12px', padding:'20px',
-               border:'1px solid #e5e5e5' },
-    cardNum: { fontSize:'32px', fontWeight:'700', color:'#B91C1C', marginBottom:'4px' },
-    cardLbl: { fontSize:'13px', color:'#666' },
-    table:   { width:'100%', borderCollapse:'collapse', fontSize:'13px' },
-    th:      { textAlign:'left', padding:'10px 12px', background:'#f9f9f9',
-               borderBottom:'1px solid #eee', fontWeight:'500', color:'#444' },
-    td:      { padding:'10px 12px', borderBottom:'1px solid #f0f0f0',
-               color:'#333', verticalAlign:'middle' },
-    badge:   (color) => ({
-               display:'inline-block', padding:'3px 10px', borderRadius:'20px',
-               fontSize:'11px', fontWeight:'500',
-               background: color === 'green' ? '#E1F5EE' : color === 'red' ? '#FEF2F2' : '#FEF9E7',
-               color: color === 'green' ? '#0F6E56' : color === 'red' ? '#B91C1C' : '#B7770D' }),
-    btn:     (color) => ({
-               padding:'5px 12px', borderRadius:'6px', border:'none',
-               cursor:'pointer', fontSize:'12px', fontWeight:'500',
-               background: color === 'green' ? '#0F6E56' : color === 'red' ? '#B91C1C' : '#666',
-               color:'#fff', marginRight:'6px' }),
-    select:  { padding:'4px 8px', borderRadius:'6px', border:'1px solid #ddd',
-               fontSize:'12px', cursor:'pointer' },
-    title:   { fontSize:'16px', fontWeight:'600', marginBottom:'16px', color:'#111' }
-  }
+  wrap:    { minHeight:'100vh', width:'100%', maxWidth:'100vw',
+             overflowX:'hidden', background:'#f5f5f5', fontFamily:'sans-serif' },
+  nav:     { background:'#B91C1C', padding:'0 clamp(12px,3vw,24px)',
+             display:'flex', alignItems:'center', justifyContent:'space-between',
+             height:'56px', flexWrap:'wrap', gap:'8px' },
+  navL:    { color:'#fff', fontWeight:'600', fontSize:'clamp(13px,3vw,18px)',
+             whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' },
+  navR:    { display:'flex', alignItems:'center', gap:'clamp(6px,1.5vw,16px)',
+             flexWrap:'wrap' },
+  navBtn:  { background:'rgba(255,255,255,0.2)', color:'#fff', border:'none',
+             padding:'6px clamp(8px,2vw,14px)', borderRadius:'6px',
+             cursor:'pointer', fontSize:'clamp(11px,2.4vw,13px)',
+             whiteSpace:'nowrap' },
+  body:    { maxWidth:'1100px', margin:'0 auto',
+             padding:'clamp(16px,4vw,24px) clamp(10px,3vw,16px)',
+             width:'100%', boxSizing:'border-box' },
+  tabs:    { display:'flex', gap:'8px', marginBottom:'24px',
+             flexWrap:'wrap', overflowX:'auto' },
+  tab:     (active) => ({
+             padding:'8px clamp(10px,2.5vw,18px)', borderRadius:'8px',
+             border: active ? 'none' : '1px solid #ddd', cursor:'pointer',
+             fontSize:'clamp(11px,2.4vw,13px)', fontWeight:'500',
+             background: active ? '#B91C1C' : '#fff',
+             color: active ? '#fff' : '#444', whiteSpace:'nowrap', flexShrink:0 }),
+  grid:    { display:'grid',
+             gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,180px),1fr))',
+             gap:'16px', marginBottom:'28px' },
+  card:    { background:'#fff', borderRadius:'12px',
+             padding:'clamp(14px,3vw,20px)', border:'1px solid #e5e5e5' },
+  cardNum: { fontSize:'clamp(22px,5vw,32px)', fontWeight:'700',
+             color:'#B91C1C', marginBottom:'4px' },
+  cardLbl: { fontSize:'13px', color:'#666' },
+  tableWrap: { overflowX:'auto', WebkitOverflowScrolling:'touch' },
+  table:   { width:'100%', minWidth:'600px', borderCollapse:'collapse',
+             fontSize:'13px' },
+  th:      { textAlign:'left', padding:'10px 12px', background:'#f9f9f9',
+             borderBottom:'1px solid #eee', fontWeight:'500', color:'#444',
+             whiteSpace:'nowrap' },
+  td:      { padding:'10px 12px', borderBottom:'1px solid #f0f0f0',
+             color:'#333', verticalAlign:'middle' },
+  badge:   (color) => ({
+             display:'inline-block', padding:'3px 10px', borderRadius:'20px',
+             fontSize:'11px', fontWeight:'500',
+             background: color === 'green' ? '#E1F5EE' : color === 'red' ? '#FEF2F2' : '#FEF9E7',
+             color: color === 'green' ? '#0F6E56' : color === 'red' ? '#B91C1C' : '#B7770D' }),
+  btn:     (color) => ({
+             padding:'5px 12px', borderRadius:'6px', border:'none',
+             cursor:'pointer', fontSize:'12px', fontWeight:'500',
+             background: color === 'green' ? '#0F6E56' : color === 'red' ? '#B91C1C' : '#666',
+             color:'#fff', marginRight:'6px', whiteSpace:'nowrap' }),
+  select:  { padding:'4px 8px', borderRadius:'6px', border:'1px solid #ddd',
+             fontSize:'12px', cursor:'pointer' },
+  title:   { fontSize:'16px', fontWeight:'600', marginBottom:'16px', color:'#111' }
+}
 
   if (loading) return (
     <div style={{ textAlign:'center', padding:'4rem', color:'#666' }}>
@@ -194,8 +208,9 @@ const [artSearch, setArtSearch]     = useState('')
             {pending.length > 0 && (
               <div style={s.card}>
                 <div style={s.title}>Pending Approvals</div>
-                <table style={s.table}>
-                  <thead>
+                <div style={s.tableWrap}>
+                 <table style={s.table}>
+                   <thead>
                     <tr>
                       <th style={s.th}>Title</th>
                       <th style={s.th}>Author</th>
@@ -218,7 +233,9 @@ const [artSearch, setArtSearch]     = useState('')
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                   </table>
+                </div>
+                
               </div>
             )}
           </>
@@ -231,8 +248,9 @@ const [artSearch, setArtSearch]     = useState('')
             {pending.length === 0 ? (
               <p style={{ color:'#666', fontSize:'14px' }}>No pending articles.</p>
             ) : (
-              <table style={s.table}>
-                <thead>
+             <div style={s.tableWrap}>
+             <table style={s.table}>
+            <thead>
                   <tr>
                     <th style={s.th}>Title</th>
                     <th style={s.th}>Author</th>
@@ -268,7 +286,9 @@ const [artSearch, setArtSearch]     = useState('')
                     </tr>
                   ))}
                 </tbody>
-              </table>
+             </table>
+              </div>
+             
             )}
           </div>
         )}
@@ -277,7 +297,8 @@ const [artSearch, setArtSearch]     = useState('')
         {activeTab === 'users' && (
           <div style={s.card}>
             <div style={s.title}>All Users</div>
-            <table style={s.table}>
+            <div style={s.tableWrap}>
+  <table style={s.table}>
               <thead>
                 <tr>
                   <th style={s.th}>Name</th>
@@ -320,6 +341,7 @@ const [artSearch, setArtSearch]     = useState('')
                 ))}
               </tbody>
             </table>
+</div>
           </div>
         )}
 
@@ -345,7 +367,8 @@ const [artSearch, setArtSearch]     = useState('')
         कोणत्याही बातम्या नाहीत.
       </p>
     ) : (
-      <table style={s.table}>
+      <div style={s.tableWrap}>
+  <table style={s.table}>
         <thead>
           <tr>
             <th style={s.th}>शीर्षक</th>
@@ -433,6 +456,7 @@ const [artSearch, setArtSearch]     = useState('')
           ))}
         </tbody>
       </table>
+</div>
     )}
   </div>
 )}
